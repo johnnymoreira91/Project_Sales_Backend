@@ -22,9 +22,7 @@
       "@controllers/*": ["./src/controllers/*"],
       "@models/*": ["./src/models/*"],
       "@views/*": ["./src/views/*"],
-      "@config/*": ["./src/config/*"],
-      // "@middlewares/*": ["./src/middlewares/*"],
-      // "@services/*": ["./src/services/*"],
+      "@config/*": ["./src/config/*"]
     }
   },
   "include": [
