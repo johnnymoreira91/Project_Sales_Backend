@@ -19,7 +19,7 @@
      "env": {
        "NODE_ENV": "dev",
        "MONGO_USER": "admin",
-       "MONGO_PASSWORD": "Inicial01",
+       "MONGO_PASSWORD": "initial",
        "MONGO_DATABASE": "vendas"
      }
    }
