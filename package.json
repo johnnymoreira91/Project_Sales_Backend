@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-    "prod": "pm2 start dist/index.js --max-memory-restart 512M --name Sales_Back",
+    "prod": "NODE_ENV=prod pm2 start dist/index.js --max-memory-restart 512M --name Sales_Back",
     "stop": "pm2 stop all && pm2 delete all",
     "start": "NODE_ENV=prod node dist/index.js",
     "dev": "NODE_ENV=dev ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
