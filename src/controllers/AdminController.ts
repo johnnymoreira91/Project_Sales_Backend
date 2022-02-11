@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Admin } from '@models/Admin'
+
 export default {
   async getAll (req: Request<{}, {}, {}>, res: Response) {
     try {

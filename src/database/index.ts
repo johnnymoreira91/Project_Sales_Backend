@@ -1,4 +1,6 @@
 import mongoose, { ConnectOptions } from 'mongoose'
+import dotenv from 'dotenv'
+dotenv.config()
 
 // let uri = 'mongodb://root:123456@localhost:27017/vendas?authSource=admin'
 // let uri = 'mongodb://localhost:27017/vendas'
