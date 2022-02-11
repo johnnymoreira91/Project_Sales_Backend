@@ -4,17 +4,24 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "Launch Program",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "program": "${file}",
-      "outFiles": [
-        "${workspaceFolder}/**/*.js"
-      ]
-    }
+   {
+     "console": "integratedTerminal",
+     "internalConsoleOptions": "neverOpen",
+     "name": "nodemon",
+     "program": "src/index.ts",
+     "request": "launch",
+     "restart": true,
+     "runtimeExecutable": "nodemon",
+     "skipFiles": [
+       "<node_internals>/**"
+     ],
+     "type": "pwa-node",
+     "env": {
+       "NODE_ENV": "dev",
+       "MONGO_USER": "admin",
+       "MONGO_PASSWORD": "Inicial01",
+       "MONGO_DATABASE": "vendas"
+     }
+   }
   ]
 }

@@ -2,7 +2,7 @@ import mongoose, { ConnectOptions } from 'mongoose'
 
 // let uri = 'mongodb://root:123456@localhost:27017/vendas?authSource=admin'
 // let uri = 'mongodb://localhost:27017/vendas'
-const uri = 'mongodb+srv://admin:Inicial01@cluster0.vldqd.mongodb.net/vendas?retryWrites=true&w=majority'
+const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.vldqd.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
