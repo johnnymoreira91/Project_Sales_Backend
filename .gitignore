@@ -3,3 +3,5 @@ dist
 .env
 yarn.lock
 package-lock.json
+./vscode/launch.json
+launch.json
