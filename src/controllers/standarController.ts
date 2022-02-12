@@ -27,31 +27,7 @@ export default {
         }
       })
       if (login) {
-        const hash = bcrypt.hashSync(password, login.password)
-        if (hash === login.password) {
-          const user = login
-          const accessToken = jwt.sign(
-            { login: user.uuid },
-            'teste',
-            { expiresIn: 86400 }
-          )
-
-          login.password = 'undefined'
-
-          await store.set('user', user)
-
-          return res.status(200).json(
-            {
-              message: `${login.email} has been authenticated`,
-              accessToken,
-              user: user.name,
-              permission: user.permission,
-              superUser: user.superUser,
-              id: user?.uuid
-
-            }
-          )
-        }
+        doLogin(login, password, res)
       } else {
         return res.status(400).json({ Error: 'Email or Password Error' })
       }
@@ -101,4 +77,32 @@ export default {
     }
   }
 
+}
+
+async function doLogin (login, password, res) {
+  const hash = bcrypt.hashSync(password, login.password)
+  if (hash === login.password) {
+    const user = login
+    const accessToken = jwt.sign(
+      { login: user.uuid },
+      'teste',
+      { expiresIn: 86400 }
+    )
+
+    login.password = 'undefined'
+
+    await store.set('user', user)
+
+    return res.status(200).json(
+      {
+        message: `${login.email} has been authenticated`,
+        accessToken,
+        user: user.name,
+        permission: user.permission,
+        superUser: user.superUser,
+        id: user?.uuid
+
+      }
+    )
+  }
 }
