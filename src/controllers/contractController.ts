@@ -122,21 +122,30 @@ export default {
     const { contractId } = req.params
     const { code, contractName, linkUrl } = req.body
     try {
-      const findContract = await prisma.contract.findFirst({
-        where: { contractUuid: contractId }
-      })
+      const storeUser = await store.get('user')
+      if (storeUser.permissionLevel >= 1 ||
+        storeUser.superUser === true ||
+        storeUser.admin === true) {
+        const findContract = await prisma.contract.findFirst({
+          where: { contractUuid: contractId }
+        })
 
-      if (findContract != null) {
-        return res.status(404).json('Contract alredy Exist')
-      }
-      const contractEdit = await prisma.contract.create({
-        data: {
-          code: code,
-          contractName: contractName,
-          linkUrl: linkUrl
+        if (findContract != null) {
+          return res.status(404).json('Contract alredy Exist')
         }
-      })
-      return res.status(200).json(contractEdit)
+        const contractEdit = await prisma.contract.create({
+          data: {
+            code: code,
+            contractName: contractName,
+            linkUrl: linkUrl
+          }
+        })
+        return res.status(200).json(contractEdit)
+      } else {
+        return res.status(403).json(
+          `user: ${storeUser.name} doenst have permission to do this`
+        )
+      }
     } catch (error) {
       return res.status(400).json('Error to update contract')
     }
