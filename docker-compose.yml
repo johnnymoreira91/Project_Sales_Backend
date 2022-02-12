@@ -36,7 +36,7 @@ services:
     restart: always
     networks:
       backend:
-        ipv4_address: 172.30.0.4
+        ipv4_address: 172.30.0.3
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: 123456
