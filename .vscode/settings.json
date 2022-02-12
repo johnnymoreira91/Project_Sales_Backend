@@ -39,7 +39,7 @@
   "npm.autoDetect": "off",
   "editor.fontLigatures": true,
   "vsicons.projectDetection.autoReload": true,
-  "files.autoSave": "onFocusChange",
+  "files.autoSave": "off",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   }
