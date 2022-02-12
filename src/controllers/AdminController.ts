@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Admin } from '@models/Admin'
+import bcrypt from 'bcrypt'
 
 export default {
   async getAll (req: Request<{}, {}, {}>, res: Response) {
@@ -31,15 +32,22 @@ export default {
     name: string, email: string, password: string
   }>, res: Response) {
     // const { adminId } = req.params
-    const { email } = req.body
+    const { name, email, password } = req.body
     try {
       if (await Admin.findOne({ email })) {
         return res.status(404).send(
           { error: 'Email already exists in DataBase' }
         )
       }
-      const admin = await Admin.create(req.body)
-      admin.password = 'undefined'
+      const salt = bcrypt.genSaltSync(10)
+      const hash = bcrypt.hashSync(password, salt)
+      const admin = await Admin.create({
+        name: name,
+        email: email,
+        password: hash,
+        admin: true
+      })
+      // admin.password = 'undefined'
       return res.status(200).json(admin)
     } catch (error) {
       return res.status(400).json('Error to create admin')

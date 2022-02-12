@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import store from 'store'
 import httpError from 'http-errors'
+import { Admin } from '@models/Admin'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -28,6 +29,11 @@ export default {
       })
       if (login) {
         doLogin(login, password, res)
+      } else if (!login) {
+        const loginAdm = await Admin.findOne({ email }).select('+password')
+        console.log(loginAdm)
+        if (!loginAdm) return res.status(400).send({ error: 'Admin not found' })
+        doLogin(loginAdm, password, res)
       } else {
         return res.status(400).json({ Error: 'Email or Password Error' })
       }
@@ -81,6 +87,8 @@ export default {
 
 async function doLogin (login, password, res) {
   const hash = bcrypt.hashSync(password, login.password)
+  console.log(login, 'login')
+  console.log(hash, 'hash')
   if (hash === login.password) {
     const user = login
     const accessToken = jwt.sign(
@@ -100,8 +108,8 @@ async function doLogin (login, password, res) {
         user: user.name,
         permission: user.permission,
         superUser: user.superUser,
-        id: user?.uuid
-
+        id: user.uuid,
+        admin: user.admin
       }
     )
   }
