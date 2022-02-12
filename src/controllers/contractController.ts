@@ -27,14 +27,23 @@ export default {
   async getById (req: Request<{ contractId: string }, {}, {}>, res: Response) {
     const { contractId } = req.params
     try {
-      const contract = await prisma.contract.findFirst({
-        where: { contractUuid: contractId }
-      })
+      const storeUser = await store.get('user')
+      if (storeUser.permissionLevel >= 1 ||
+        storeUser.superUser === true ||
+        storeUser.admin === true) {
+        const contract = await prisma.contract.findFirst({
+          where: { contractUuid: contractId }
+        })
 
-      if (!contract) {
-        return res.status(404).json('Any contract Found')
+        if (!contract) {
+          return res.status(404).json('Any contract Found')
+        }
+        return res.status(200).json(contract)
+      } else {
+        return res.status(403).json(
+          `user: ${storeUser.name} doenst have permission to do this`
+        )
       }
-      return res.status(200).json(contract)
     } catch (error) {
       return res.status(400).json('Error to find contract')
     }
@@ -46,23 +55,32 @@ export default {
     const { contractId } = req.params
     const { code, contractName, linkUrl } = req.body
     try {
-      const findContract = await prisma.contract.findFirst({
-        where: { contractUuid: contractId }
-      })
+      const storeUser = await store.get('user')
+      if (storeUser.permissionLevel >= 1 ||
+        storeUser.superUser === true ||
+        storeUser.admin === true) {
+        const findContract = await prisma.contract.findFirst({
+          where: { contractUuid: contractId }
+        })
 
-      if (!findContract) {
-        return res.status(404).json('Contract Not Found!')
-      }
-      const contractEdit = await prisma.contract.update({
-        where: { contractUuid: contractId },
-        data: {
-          code: code,
-          contractName: contractName,
-          linkUrl: linkUrl
+        if (!findContract) {
+          return res.status(404).json('Contract Not Found!')
         }
-      })
+        const contractEdit = await prisma.contract.update({
+          where: { contractUuid: contractId },
+          data: {
+            code: code,
+            contractName: contractName,
+            linkUrl: linkUrl
+          }
+        })
 
-      return res.status(200).json(contractEdit)
+        return res.status(200).json(contractEdit)
+      } else {
+        return res.status(403).json(
+          `user: ${storeUser.name} doenst have permission to do this`
+        )
+      }
     } catch (error) {
       return res.status(400).json('Error to update contract')
     }
@@ -71,19 +89,28 @@ export default {
   async deleteContract (req: Request<{ contractId: string }, {}, {}>, res: Response) {
     const { contractId } = req.params
     try {
-      const contract = await prisma.contract.findFirst({
-        where: { contractUuid: contractId }
-      })
+      const storeUser = await store.get('user')
+      if (storeUser.permissionLevel >= 1 ||
+        storeUser.superUser === true ||
+        storeUser.admin === true) {
+        const contract = await prisma.contract.findFirst({
+          where: { contractUuid: contractId }
+        })
 
-      if (!contract) {
-        return res.status(404).json('Any contract Found')
+        if (!contract) {
+          return res.status(404).json('Any contract Found')
+        }
+        await prisma.contract.delete({
+          where: { contractUuid: contractId }
+        })
+        return res.status(201).json({
+          message: `contract: ${contract.contractName} deleted`
+        })
+      } else {
+        return res.status(403).json(
+          `user: ${storeUser.name} doenst have permission to do this`
+        )
       }
-      await prisma.contract.delete({
-        where: { contractUuid: contractId }
-      })
-      return res.status(201).json({
-        message: `contract: ${contract.contractName} deleted`
-      })
     } catch (error) {
       return res.status(400).json('Error to find contracts')
     }
