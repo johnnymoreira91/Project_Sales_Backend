@@ -1,7 +1,9 @@
 import mongoose from '../database'
+import { v4 as uuidv4 } from 'uuid'
 // import bcrypt from 'bcrypt'
 
 interface Admin {
+  uuid: string,
   name: string;
   email: string;
   password: string,
@@ -12,6 +14,7 @@ interface Admin {
 
 // Schema
 const schema = new mongoose.Schema<Admin>({
+  uuid: { type: String, required: true, default: uuidv4() },
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
@@ -29,3 +32,8 @@ const schema = new mongoose.Schema<Admin>({
 const Admin = mongoose.model('Admin', schema)
 
 export { Admin }
+
+// function generateUuid () {
+//   const uuid = uuidv4()
+//   return uuid
+// }
