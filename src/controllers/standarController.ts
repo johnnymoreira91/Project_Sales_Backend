@@ -47,8 +47,8 @@ export default {
   },
 
   async store (req: Request<{}, {}, { name: string, password: string,
-    superUser: boolean, email: string, permission: string }>, res: Response) {
-    const { name, email, password, superUser, permission } = req.body
+    superUser: boolean, email: string, permissionLevel: number }>, res: Response) {
+    const { name, email, password, superUser, permissionLevel } = req.body
 
     const salt = bcrypt.genSaltSync(10)
     const hash = bcrypt.hashSync(password, salt)
@@ -69,7 +69,7 @@ export default {
           password: hash,
           Permission: {
             connect: {
-              permissionName: permission || 'USER'
+              permissionLevel: permissionLevel || 0
             }
           }
         }
@@ -86,10 +86,9 @@ export default {
 
 async function doLogin (login, password, res) {
   const hash = bcrypt.hashSync(password, login.password)
-  console.log(login, 'login')
-  console.log(hash, 'hash')
   if (hash === login.password) {
     const user = login
+    console.log(user, 'user')
     const accessToken = jwt.sign(
       { login: user.uuid },
       'teste',
@@ -105,7 +104,7 @@ async function doLogin (login, password, res) {
         message: `${login.email} has been authenticated`,
         accessToken,
         user: user.name,
-        permission: user.permission,
+        permission: user.permissionLevel,
         superUser: user.superUser,
         id: user.uuid,
         admin: user.admin

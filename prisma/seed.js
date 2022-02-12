@@ -34,11 +34,11 @@ async function main () {
       },
       {
         permissionName: 'DEV',
-        permissionLevel: 5
+        permissionLevel: 6
       },
       {
         permissionName: 'ADMIN',
-        permissionLevel: 6
+        permissionLevel: 7
       }
     ]
   })

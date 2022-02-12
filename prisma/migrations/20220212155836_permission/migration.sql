@@ -8,7 +8,7 @@ CREATE TABLE "users" (
     "password" VARCHAR(100) NOT NULL DEFAULT E'123456',
     "cpf" TEXT,
     "rg" TEXT,
-    "permission" TEXT NOT NULL,
+    "permissionLevel" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -74,7 +74,10 @@ CREATE UNIQUE INDEX "permissions_permissionUuid_key" ON "permissions"("permissio
 CREATE UNIQUE INDEX "permissions_permissionName_key" ON "permissions"("permissionName");
 
 -- CreateIndex
-CREATE INDEX "permissions_permissionName_idx" ON "permissions"("permissionName");
+CREATE UNIQUE INDEX "permissions_permissionLevel_key" ON "permissions"("permissionLevel");
+
+-- CreateIndex
+CREATE INDEX "permissions_permissionName_permissionLevel_idx" ON "permissions"("permissionName", "permissionLevel");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "contracts_contractUuid_key" ON "contracts"("contractUuid");
@@ -95,7 +98,7 @@ CREATE UNIQUE INDEX "products_productCode_key" ON "products"("productCode");
 CREATE INDEX "products_productUuid_productCode_idx" ON "products"("productUuid", "productCode");
 
 -- AddForeignKey
-ALTER TABLE "users" ADD CONSTRAINT "users_permission_fkey" FOREIGN KEY ("permission") REFERENCES "permissions"("permissionName") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "users" ADD CONSTRAINT "users_permissionLevel_fkey" FOREIGN KEY ("permissionLevel") REFERENCES "permissions"("permissionLevel") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "products" ADD CONSTRAINT "products_contractCode_fkey" FOREIGN KEY ("contractCode") REFERENCES "contracts"("code") ON DELETE RESTRICT ON UPDATE CASCADE;

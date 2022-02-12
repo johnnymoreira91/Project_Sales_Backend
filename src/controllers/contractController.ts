@@ -1,13 +1,24 @@
+/* eslint-disable no-use-before-define */
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
+import store from 'store'
 
 const prisma = new PrismaClient()
 
 export default {
   async getAll (req: Request<{}, {}, {}>, res: Response) {
     try {
-      const contracts = await prisma.contract.findMany()
-      return res.status(200).json(contracts)
+      const storeUser = await store.get('user')
+      if (storeUser.permissionLevel >= 1 ||
+       storeUser.superUser === true ||
+       storeUser.admin === true) {
+        const contracts = await prisma.contract.findMany()
+        return res.status(200).json(contracts)
+      } else {
+        return res.status(403).json(
+          `user: ${storeUser.name} doenst have permission to do this`
+        )
+      }
     } catch (error) {
       return res.status(400).json('Error to find contracts')
     }
