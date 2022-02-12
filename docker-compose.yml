@@ -1,0 +1,62 @@
+version: "3" ## especifica a versão do docker-compose file
+
+services:
+  # app: ## nome do serviço
+  #   build: . ## localização do dockerfile
+  #   command: yarn dev ## comando a executar
+  #   ports:
+  #     - "3001:3001" ## redirecionamento de porta quando chegar alguma requisição na porta 3000 chama o container na porta 3000
+  #   volumes:
+  #     - .:/usr/app ## monitoro a pasta atual . e envio as alterações para /usr/app
+  dbPg:
+    image: postgres:latest
+    container_name: "postgres"
+    environment:
+      - POSTGRES_DB=vendas
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+    volumes:
+      - "./data/postgres:/var/lib/docker/postgresql/data"
+    networks:
+      backend:
+        ipv4_address: 172.30.0.2
+    ports:
+      - 5432:5432
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+          cpus: '1.5'
+        reservations:
+          memory: 1024M
+
+  mongo:
+    image: mongo
+    container_name: mongo-dev
+    restart: always
+    networks:
+      backend:
+        ipv4_address: 172.30.0.4
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+      MONGO_INITDB_DATABASE: vendas
+    ports:
+      - "27017:27017"
+      - "28017:28017"
+    volumes:
+       - "./data/mongo:/var/lib/docker/mongo/data"
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+          cpus: '1.5'
+        reservations:
+          memory: 512M
+
+networks: 
+  backend:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.30.0.0/16

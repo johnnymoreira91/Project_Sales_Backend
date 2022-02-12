@@ -1,0 +1,19 @@
+git init
+yarn init -y
+yarn add typescript -D
+yarn tsc --init
+
+----
+yarn add express
+----
+
+yarn add ts-node-dev -D
+yarn add tsconfig-paths -D
+
+yarn add eslint -D
+yarn eslint --init
+
+yarn add jest -D
+yarn add @types/jest -D
+yarn jest --init
+yarn add ts-jest -D

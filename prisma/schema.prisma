@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  name       String
+  uuid       String     @unique @default(uuid())
+  superUser  Boolean    @default(false)
+  email      String     @unique @db.VarChar(100)
+  password   String     @default("123456") @db.VarChar(100)
+  cpf        String?
+  rg         String?
+  permission String
+  Permission Permission @relation(fields: [permission], references: [permissionName])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([name, uuid])
+  @@map("users")
+}
+
+model Permission {
+  id              Int      @id @default(autoincrement())
+  permissionUuid  String   @unique @default(uuid())
+  permissionName  String   @unique
+  permissionLevel Int
+  User            User[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([permissionName])
+  @@map("permissions")
+}
+
+model Contract {
+  id           Int       @id @default(autoincrement())
+  contractUuid String    @unique @default(uuid())
+  contractName String
+  code         String    @unique
+  linkUrl      String?
+  Product      Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([contractUuid, code])
+  @@map("contracts")
+}
+
+model Product {
+  id                 Int      @id @default(autoincrement())
+  productUuid        String   @unique @default(uuid())
+  productName        String
+  productCode        String   @unique
+  productPrice       Int
+  productDescription String?
+  urlPhoto           String
+  onSale             Boolean?
+  productStock       Int
+  contractCode       String
+  Contract           Contract @relation(fields: [contractCode], references: [code])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([productUuid, productCode])
+  @@map("products")
+}
