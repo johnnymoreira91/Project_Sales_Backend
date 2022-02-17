@@ -9,6 +9,6 @@ describe('Should test ContractMock', () => {
   })
 
   // it('should get all ContractMock' () => {
-  //   let contracts = ContractMock
+  //   let contracts = MyClass()
   // })
 })
