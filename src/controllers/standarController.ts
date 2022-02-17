@@ -81,7 +81,6 @@ export default {
 
       return res.status(200).json(user)
     } catch (error) {
-      console.log(error)
       return res.status(400).json({ message: 'Error to insert a new user', error })
     }
   }
@@ -92,7 +91,6 @@ async function doLogin (login, password, res) {
   const hash = bcrypt.hashSync(password, login.password)
   if (hash === login.password) {
     const user = login
-    console.log(user, 'user')
     const accessToken = jwt.sign(
       { login: user.uuid },
       'teste',
