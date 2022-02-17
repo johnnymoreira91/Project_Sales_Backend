@@ -56,7 +56,7 @@ export default {
     const { code, contractName, linkUrl } = req.body
     try {
       const storeUser = await store.get('user')
-      if (storeUser.permissionLevel >= 1 ||
+      if (storeUser.permissionLevel >= 2 ||
         storeUser.superUser === true ||
         storeUser.admin === true) {
         const findContract = await prisma.contract.findFirst({
@@ -90,7 +90,7 @@ export default {
     const { contractId } = req.params
     try {
       const storeUser = await store.get('user')
-      if (storeUser.permissionLevel >= 1 ||
+      if (storeUser.permissionLevel >= 2 ||
         storeUser.superUser === true ||
         storeUser.admin === true) {
         const contract = await prisma.contract.findFirst({
