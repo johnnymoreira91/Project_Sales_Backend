@@ -23,7 +23,7 @@ Object.keys(ifaces).forEach((ifname) => {
 if (process.env.NODE_ENV === 'dev') {
   Connect(3001, 'dev')
 } else if (process.env.NODE_ENV === 'prod') {
-  Connect(8080, 'prod')
+  Connect(80, 'prod')
 } else {
   Connect(3001, 'NO_AMBIENT_DEFINED')
 }
