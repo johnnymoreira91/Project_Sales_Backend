@@ -61,6 +61,10 @@ export default {
       if (emailUser != null) {
         throw new httpError.Conflict(`Error email: ${emailUser.email} already exist`)
       }
+      const loginAdm = await Admin.findOne({ email }).select('+password')
+      if (loginAdm != null) {
+        throw new httpError.Conflict(`Error email: ${loginAdm.email} already exist`)
+      }
       const user = await prisma.user.create({
         data: {
           name,

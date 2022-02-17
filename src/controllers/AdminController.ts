@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
 import { Admin } from '@models/Admin'
 import bcrypt from 'bcrypt'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export default {
   async getAll (req: Request<{}, {}, {}>, res: Response) {
@@ -34,6 +37,12 @@ export default {
     // const { adminId } = req.params
     const { name, email, password } = req.body
     try {
+      const user = await prisma.user.findFirst({
+        where: { email: email }
+      })
+      if (user != null) {
+        return res.status(409).json('User already Exist')
+      }
       if (await Admin.findOne({ email })) {
         return res.status(404).send(
           { error: 'Email already exists in DataBase' }
