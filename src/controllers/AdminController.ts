@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { Admin } from '@models/Admin'
 import bcrypt from 'bcrypt'
 import { PrismaClient } from '@prisma/client'
+import { Token } from '@models/JwtKey'
 
 const prisma = new PrismaClient()
 
@@ -14,7 +15,7 @@ export default {
       }
       return res.status(200).json(admins)
     } catch (error) {
-      return res.status(400).json('Error to find Admins')
+      return res.status(400).json('Error to find Admins !!!')
     }
   },
 
@@ -27,7 +28,7 @@ export default {
       }
       return res.status(200).json(admins)
     } catch (error) {
-      return res.status(400).json('Error to find Admins')
+      return res.status(400).json('Error to find Admins !')
     }
   },
 
@@ -81,6 +82,32 @@ export default {
       return res.status(200).json(bringAdm)
     } catch (error) {
       return res.status(400).json('Error to update admin')
+    }
+  },
+
+  /// ///////////////////////////// log
+
+  async getLogToken (req: Request<{}, {}, {}>, res: Response) {
+    try {
+      const tokens = await Token.find({})
+      if (!tokens) {
+        return res.status(404).json('Any token Found!')
+      }
+      return res.status(200).json(tokens)
+    } catch (error) {
+      return res.status(400).json('Error to find tokens')
+    }
+  },
+
+  async deleteToken (req: Request<{}, {}, {}>, res: Response) {
+    try {
+      await Token.deleteMany({})
+      const tokens = await Token.find({})
+      return res.status(200).json({
+        totalTokens: tokens.length
+      })
+    } catch (error) {
+      return res.status(400).json('Error to find tokens')
     }
   }
 

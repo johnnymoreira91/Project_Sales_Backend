@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt'
 import store from 'store'
 import httpError from 'http-errors'
 import { Admin } from '@models/Admin'
+import { Token } from '../models/JwtKey'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
@@ -100,7 +101,10 @@ async function doLogin (login, password, res) {
     login.password = 'undefined'
 
     await store.set('user', user)
-
+    await Token.create({
+      userName: user.name,
+      token: accessToken
+    })
     return res.status(200).json(
       {
         message: `${login.email} has been authenticated`,
