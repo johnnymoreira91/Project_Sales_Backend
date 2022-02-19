@@ -7,8 +7,9 @@ import bcrypt from 'bcrypt'
 import store from 'store'
 import httpError from 'http-errors'
 import { Admin, AdminAdm } from '@models/Admin'
-import { Token } from '../models/JwtKey'
-import { Prisma, PrismaClient } from '@prisma/client'
+import addLog from '../middlewares/LoggerMySql'
+// import { Token } from '../models/JwtKey'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -97,7 +98,7 @@ interface UserLogin {
   superUser: boolean
 }
 
-async function doLogin (login: UserLogin, password: string, res: Response) {
+async function doLogin (login: UserLogin, password: string, res: Response, req: Request) {
   const hash = bcrypt.hashSync(password, login.password)
   if (hash === login.password) {
     const user = login
@@ -110,7 +111,7 @@ async function doLogin (login: UserLogin, password: string, res: Response) {
     login.password = 'undefined'
 
     await store.set('user', user)
-    const ip = 'null'
+    const ip = req.socket.remoteAddress
     await addLog(login.name, accessToken, ip)
     // await Token.create({
     //   userName: user.name,
@@ -127,17 +128,4 @@ async function doLogin (login: UserLogin, password: string, res: Response) {
       }
     )
   }
-}
-
-async function addLog (
-  name: string, token: string, ip: string
-) {
-  const log = await prisma.log.create({
-    data: {
-      nameUser: name,
-      tokenUser: token,
-      ip: ip || 'Not Found Ip'
-    }
-  })
-  console.log(log, 'log')
 }
