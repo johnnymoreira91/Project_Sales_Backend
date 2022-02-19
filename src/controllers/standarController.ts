@@ -23,7 +23,7 @@ export default {
   async login (req: Request<{}, {}, { email: string, password: string }>, res: Response) {
     const { email, password } = req.body
     try {
-      const ipCliente = req.connection.remoteAddress || req.socket.remoteAddress
+      const ipCliente = req.socket.remoteAddress
       const login = await prisma.user.findUnique({
         where: {
           email
@@ -123,7 +123,8 @@ async function doLogin (login: UserLogin, password: string, ip: string, res: Res
         user: user.name,
         permission: user.permissionLevel,
         superUser: user.superUser,
-        id: user.uuid
+        id: user.uuid,
+        ip: ip
       }
     )
   }
