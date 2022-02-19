@@ -71,6 +71,17 @@ CREATE TABLE `products` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Log` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `nameUser` VARCHAR(191) NOT NULL,
+    `tokenUser` VARCHAR(191) NOT NULL,
+    `ip` VARCHAR(191) NULL,
+    `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `users` ADD CONSTRAINT `users_permissionLevel_fkey` FOREIGN KEY (`permissionLevel`) REFERENCES `permissions`(`permissionLevel`) ON DELETE RESTRICT ON UPDATE CASCADE;
 

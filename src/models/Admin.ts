@@ -2,23 +2,23 @@ import mongoose from '../database'
 import { v4 as uuidv4 } from 'uuid'
 // import bcrypt from 'bcrypt'
 
-interface Admin {
+export interface AdminAdm {
   uuid: string,
   name: string;
   email: string;
   password: string,
   createdAt: Date,
-  admin: boolean,
+  superUser: boolean,
   // avatar?: string;
 }
 
 // Schema
-const schema = new mongoose.Schema<Admin>({
+const schema = new mongoose.Schema<AdminAdm>({
   uuid: { type: String, required: true, default: uuidv4() },
   name: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  admin: { type: Boolean, default: true },
+  superUser: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now }
   // avatar: String
 })
