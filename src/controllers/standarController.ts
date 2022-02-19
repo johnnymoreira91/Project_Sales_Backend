@@ -30,11 +30,11 @@ export default {
         }
       })
       if (login) {
-        doLogin(login, password, res)
+        doLogin(login, password, res, req)
       } else if (!login) {
         const loginAdm = await Admin.findOne({ email }).select('+password')
         if (!loginAdm) return res.status(400).send({ error: 'Admin not found' })
-        doLogin(loginAdm, password, res)
+        doLogin(loginAdm, password, res, req)
       } else {
         return res.status(400).json({ Error: 'Email or Password Error' })
       }
