@@ -5,3 +5,7 @@ yarn.lock
 package-lock.json
 ./vscode/launch.json
 launch.json
+./logs/*
+./logs
+logs
+logs/*

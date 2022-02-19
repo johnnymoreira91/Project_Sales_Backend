@@ -125,7 +125,8 @@ async function doLogin (login: UserLogin, password: string, res: Response, req: 
         user: user.name,
         permission: user.permissionLevel,
         superUser: user.superUser,
-        id: user.uuid
+        id: user.uuid,
+        ip: ip
       }
     )
   }
