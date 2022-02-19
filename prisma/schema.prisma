@@ -79,5 +79,6 @@ model Log {
   nameUser  String
   tokenUser String
   ip        String?
+  route     String?
   date      DateTime @default(now())
 }

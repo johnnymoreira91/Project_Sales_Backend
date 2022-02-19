@@ -112,7 +112,8 @@ async function doLogin (login: UserLogin, password: string, res: Response, req: 
 
     await store.set('user', user)
     const ip = req.socket.remoteAddress
-    await addLog(login.name, accessToken, ip)
+    const route = req.route.path
+    await addLog(login.name, accessToken, ip, route)
     // await Token.create({
     //   userName: user.name,
     //   token: accessToken
