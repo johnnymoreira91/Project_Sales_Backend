@@ -23,17 +23,18 @@ export default {
   async login (req: Request<{}, {}, { email: string, password: string }>, res: Response) {
     const { email, password } = req.body
     try {
+      const ipCliente = req.connection.remoteAddress || req.socket.remoteAddress
       const login = await prisma.user.findUnique({
         where: {
           email
         }
       })
       if (login) {
-        doLogin(login, password, req, res)
+        doLogin(login, password, ipCliente, res)
       } else if (!login) {
         const loginAdm = await Admin.findOne({ email }).select('+password')
         if (!loginAdm) return res.status(400).send({ error: 'Admin not found' })
-        doLogin(loginAdm, password, req, res)
+        doLogin(loginAdm, password, ipCliente, res)
       } else {
         return res.status(400).json({ Error: 'Email or Password Error' })
       }
@@ -97,7 +98,7 @@ interface UserLogin {
   superUser: boolean
 }
 
-async function doLogin (login: UserLogin, password: string, req: Request, res: Response) {
+async function doLogin (login: UserLogin, password: string, ip: string, res: Response) {
   const hash = bcrypt.hashSync(password, login.password)
   if (hash === login.password) {
     const user = login
@@ -110,8 +111,7 @@ async function doLogin (login: UserLogin, password: string, req: Request, res: R
     login.password = 'undefined'
 
     await store.set('user', user)
-    const ipCliente = req.connection.remoteAddress || req.socket.remoteAddress
-    await addLog(login.name, accessToken, ipCliente)
+    await addLog(login.name, accessToken, ip)
     // await Token.create({
     //   userName: user.name,
     //   token: accessToken
