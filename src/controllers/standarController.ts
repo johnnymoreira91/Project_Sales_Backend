@@ -10,6 +10,8 @@ import { Admin, AdminAdm } from '@models/Admin'
 import addLog from '../middlewares/LoggerMySql'
 // import { Token } from '../models/JwtKey'
 import { PrismaClient } from '@prisma/client'
+import { UserStore } from '@models/interfaces/UserStore'
+import { UserLogin } from '@models/interfaces/UserLogin'
 
 const prisma = new PrismaClient()
 
@@ -19,6 +21,38 @@ export default {
 
   home (req: Request<{}, {}, {}>, res: Response) {
     res.status(200).render('documentation.ejs')
+  },
+
+  async activities (req: Request<{}, {}, {}>, res: Response) {
+    console.log(req.query)
+    try {
+      // const ip = req.socket.remoteAddress
+      // const route = req.route.path
+      const userStore: UserStore = await store.get('user')
+      // await addLog(userStore.user, userStore.accessToken, ip, route)
+      if (userStore.permissionLevel >= 1 || userStore.superUser === true) {
+        const activities = await prisma.log.findMany({
+          // where: {
+          //   nameUser: {
+          //     startsWith: 'admin'
+          //   }
+          // }
+        })
+        if (!activities) {
+          return res.status(401).json('Any itens found on activities')
+        }
+        return res.status(200).json(activities)
+      } else {
+        return res.status(403).json(`${userStore.user}: you dont have permission to see this`)
+      }
+    } catch (error) {
+      return res.status(400).json(
+        {
+          error: true,
+          message: 'Error to bring back activities'
+        }
+      )
+    }
   },
 
   async login (req: Request<{}, {}, { email: string, password: string }>, res: Response) {
@@ -80,22 +114,12 @@ export default {
           }
         }
       })
-
       return res.status(200).json(user)
     } catch (error) {
       return res.status(400).json({ message: 'Error to insert a new user', error })
     }
   }
 
-}
-
-interface UserLogin {
-  name: string,
-  password: string,
-  email: string,
-  uuid?: string,
-  permissionLevel?: number,
-  superUser: boolean
 }
 
 async function doLogin (login: UserLogin, password: string, res: Response, req: Request) {
