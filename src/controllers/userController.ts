@@ -1,13 +1,21 @@
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
+import addLog from 'src/middlewares/LoggerMySql'
+import store from 'store'
+import { UserStore } from '@models/interfaces/UserStore'
 
 const prisma = new PrismaClient()
 
 export default {
   async getAll (req: Request<{}, {}, { name: string }>, res: Response) {
     try {
-      const user = await prisma.user.findMany()
-      return res.status(200).json(user)
+      const userStore: UserStore = await store.get('user')
+      if (userStore.permissionLevel >= 1 || userStore.superUser === true) {
+        const user = await prisma.user.findMany()
+        return res.status(200).json(user)
+      } else {
+        return res.status(403).json('You Dont have permission to do this')
+      }
     } catch (error) {
       return res.status(400).json('Error to find users')
     }

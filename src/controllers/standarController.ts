@@ -34,7 +34,7 @@ export default {
         const activities = await prisma.log.findMany({
           // where: {
           //   nameUser: {
-          //     startsWith: 'admin'
+          //     startsWith: 'admin' || null
           //   }
           // }
         })
