@@ -1,5 +1,5 @@
+import faker from 'faker'
 const { PrismaClient } = require('@prisma/client')
-// import faker from 'faker'
 
 const prisma = new PrismaClient()
 
@@ -39,6 +39,16 @@ async function main () {
       {
         permissionName: 'ADMIN',
         permissionLevel: 7
+      }
+    ]
+  })
+
+  await prisma.contract.createMany({
+    data: [
+      {
+        contractName: 'Variedades do Joao',
+        code: 'SP0001'
+
       }
     ]
   })

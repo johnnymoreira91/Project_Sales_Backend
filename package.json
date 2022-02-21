@@ -49,6 +49,7 @@
     "dotenv": "^16.0.0",
     "dynamoose": "^2.8.5",
     "express": "^4.17.1",
+    "faker": "^6.6.6",
     "global": "^4.4.0",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
