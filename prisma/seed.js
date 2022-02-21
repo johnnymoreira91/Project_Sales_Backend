@@ -1,4 +1,5 @@
-import faker from 'faker'
+// import faker from 'faker'
+const { faker } = require('@faker-js/faker')
 const { PrismaClient } = require('@prisma/client')
 
 const prisma = new PrismaClient()
@@ -47,11 +48,46 @@ async function main () {
     data: [
       {
         contractName: 'Variedades do Joao',
-        code: 'SP0001'
-
+        code: 'SP0001',
+        linkUrl: 'www.joaovariedades.com.br'
+      },
+      {
+        contractName: 'Variedades da Maria',
+        code: 'SP0002',
+        linkUrl: 'www.mariavariedades.com.br'
       }
     ]
   })
+
+  for (let i = 0; i < 10; i++) {
+    await prisma.product.create({
+      data: {
+        productCode: `${faker.random.alphaNumeric(123)}`,
+        productName: `${faker.commerce.productName()}`,
+        productPrice: 20,
+        contractCode: 'SP0001',
+        urlPhoto: 'www.donotehavephoto.com',
+        productStock: 50,
+        onSale: true,
+        productDescription: `${faker.commerce.productDescription()}`
+      }
+    })
+  }
+
+  for (let i = 0; i < 10; i++) {
+    await prisma.product.create({
+      data: {
+        productCode: `${faker.random.alphaNumeric(123)}`,
+        productName: `${faker.commerce.productName()}`,
+        productPrice: 20,
+        contractCode: 'SP0002',
+        urlPhoto: 'www.donotehavephoto.com',
+        productStock: 50,
+        onSale: true,
+        productDescription: `${faker.commerce.productDescription()}`
+      }
+    })
+  }
 
   console.log('Seeding finished.')
 }
