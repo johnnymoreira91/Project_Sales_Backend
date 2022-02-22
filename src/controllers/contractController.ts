@@ -129,9 +129,8 @@ export default {
         const findContract = await prisma.contract.findFirst({
           where: { contractUuid: contractId }
         })
-
         if (findContract != null) {
-          return res.status(404).json('Contract alredy Exist')
+          return res.status(404).json('Contract already Exist')
         }
         const contractEdit = await prisma.contract.create({
           data: {

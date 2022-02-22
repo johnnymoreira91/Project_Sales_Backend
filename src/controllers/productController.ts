@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import { PrismaClient } from '@prisma/client'
+import store from 'store'
+import { UserStore } from '@models/interfaces/UserStore'
 
 const prisma = new PrismaClient()
 
@@ -58,28 +60,32 @@ export default {
       productStock, contractCode, urlPhoto
     } = req.body
     try {
+      const storeUser: UserStore = await store.get('user')
       const findProduct = await prisma.product.findFirst({
         where: { productCode: productCode }
       })
       if (findProduct != null) {
         return res.status(404).json('Product already exist!')
       }
-      const product = await prisma.product.create({
-        data: {
-          productName: productName,
-          productCode: productCode,
-          productPrice: productPrice,
-          productDescription: productDescription,
-          onSale: onSale || false,
-          urlPhoto: urlPhoto || '',
-          productStock: productStock || 0,
-          Contract: {
-            connect: { code: contractCode }
+      if (storeUser.permissionLevel >= 2 || storeUser.superUser === true) {
+        const product = await prisma.product.create({
+          data: {
+            productName: productName,
+            productCode: productCode,
+            productPrice: productPrice,
+            productDescription: productDescription,
+            onSale: onSale || false,
+            urlPhoto: urlPhoto || '',
+            productStock: productStock || 0,
+            Contract: {
+              connect: { code: contractCode }
+            }
           }
-        }
-      })
-      console.log(product, 'prod')
-      return res.status(200).json(product)
+        })
+        return res.status(200).json(product)
+      } else {
+        return res.status(403).json('You dont have permission to create product')
+      }
     } catch (error) {
       return res.status(400).json({
         message: 'Error to add product',
@@ -99,6 +105,7 @@ export default {
     } = req.body
     const { productId } = req.params
     try {
+      const storeUser: UserStore = await store.get('user')
       const findProduct = await prisma.product.findFirst({
         where: { productUuid: productId }
       })
@@ -106,20 +113,24 @@ export default {
       if (!findProduct) {
         return res.status(404).json('Product already exist!')
       }
-      const product = await prisma.product.update({
-        where: { productUuid: productId },
-        data: {
-          productName: productName,
-          productCode: productCode,
-          productPrice: productPrice,
-          productDescription: productDescription,
-          onSale: onSale || false,
-          urlPhoto: urlPhoto,
-          productStock: productStock,
-          contractCode: contractCode
-        }
-      })
-      return res.status(200).json(product)
+      if (storeUser.permissionLevel >= 2 || storeUser.superUser === true) {
+        const product = await prisma.product.update({
+          where: { productUuid: productId },
+          data: {
+            productName: productName,
+            productCode: productCode,
+            productPrice: productPrice,
+            productDescription: productDescription,
+            onSale: onSale || false,
+            urlPhoto: urlPhoto,
+            productStock: productStock,
+            contractCode: contractCode
+          }
+        })
+        return res.status(200).json(product)
+      } else {
+        return res.status(403).json('You dont have permission to create product')
+      }
     } catch (error) {
       return res.status(400).json('Error to update product')
     }
@@ -128,6 +139,7 @@ export default {
   async deleteProduct (req: Request<{ productId: string }, {}, {}>, res: Response) {
     const { productId } = req.params
     try {
+      const storeUser: UserStore = await store.get('user')
       const product = await prisma.product.findFirst({
         where: { productUuid: productId }
       })
@@ -135,12 +147,16 @@ export default {
       if (!product) {
         return res.status(404).json('Any Product Found')
       }
-      await prisma.product.delete({
-        where: { productUuid: productId }
-      })
-      return res.status(200).json({
-        message: `Product with code: ${product.productCode} deleted on ${new Date()}`
-      })
+      if (storeUser.permissionLevel >= 2 || storeUser.superUser === true) {
+        await prisma.product.delete({
+          where: { productUuid: productId }
+        })
+        return res.status(200).json({
+          message: `Product with code: ${product.productCode} deleted on ${new Date()}`
+        })
+      } else {
+        return res.status(403).json('You dont have permission to delete this contract')
+      }
     } catch (error) {
       return res.status(400).json('Error to find product')
     }
