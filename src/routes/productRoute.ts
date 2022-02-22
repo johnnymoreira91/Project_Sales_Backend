@@ -8,8 +8,9 @@ const router = express.Router()
 
 router.get('/', productController.getAll)
 router.get('/:productId', productController.getById)
-router.put('/:productId', productController.updateProduct)
-router.delete('/:productId', productController.deleteProduct)
-router.post('/', productController.store)
+router.get('/:contractCode/list', productController.getByContract)
+router.put('/:productId', authMiddleware, productController.updateProduct)
+router.delete('/:productId', authMiddleware, productController.deleteProduct)
+router.post('/', authMiddleware, productController.store)
 
 export default router

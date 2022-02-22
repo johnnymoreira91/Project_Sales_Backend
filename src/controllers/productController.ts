@@ -32,6 +32,22 @@ export default {
     }
   },
 
+  async getByContract (req: Request<{ contractCode: string }, {}, {}>, res: Response) {
+    const { contractCode } = req.params
+    try {
+      const product = await prisma.product.findMany({
+        where: { contractCode: contractCode }
+      })
+
+      if (!product) {
+        return res.status(404).json('Any product Found')
+      }
+      return res.status(200).json(product)
+    } catch (error) {
+      return res.status(400).json('Error to find product')
+    }
+  },
+
   async store (req: Request<{}, {}, {
     productCode: string, productPrice: number,
     productDescription: string, productName: string, onSale: boolean,
@@ -86,26 +102,26 @@ export default {
       const findProduct = await prisma.product.findFirst({
         where: { productUuid: productId }
       })
-      if (findProduct != null) {
+      console.log(findProduct)
+      if (!findProduct) {
         return res.status(404).json('Product already exist!')
       }
-      const product = await prisma.product.create({
+      const product = await prisma.product.update({
+        where: { productUuid: productId },
         data: {
           productName: productName,
           productCode: productCode,
           productPrice: productPrice,
           productDescription: productDescription,
           onSale: onSale || false,
-          urlPhoto: urlPhoto || '',
-          productStock: productStock || 0,
-          Contract: {
-            connect: { code: contractCode }
-          }
+          urlPhoto: urlPhoto,
+          productStock: productStock,
+          contractCode: contractCode
         }
       })
       return res.status(200).json(product)
     } catch (error) {
-      return res.status(400).json('Error to add product')
+      return res.status(400).json('Error to update product')
     }
   },
 
